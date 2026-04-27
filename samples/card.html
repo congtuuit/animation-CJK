@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Demo to animate
+a Chinese, Japanese or Korean character using animCJK SVG files,
+displaying a card of the character with additional data as its description and radical">
+<link rel="stylesheet" href="_css/withSelector.css" type="text/css">
+<style>
+#card
+{
+	display:block;
+	width:calc(16em + 2px);
+	margin:0.5em 0;
+}
+#card figure
+{
+	margin:0 0 0.5em 0;
+	padding:0;
+}
+#card figcaption
+{
+	text-align:center;
+	margin:0 0 0.5em 0;
+	padding:0;
+}
+#card figure svg
+{
+	width:16em;
+	height:16em;
+	border:1px solid #ccc;
+}
+#card figure svg text
+{
+	fill:#c00;
+}
+#card menu
+{
+	list-style-type:none;
+	display:flex;
+	justify-content:space-around;
+	margin:0 0 0.5em 0;
+	padding:0;
+}
+#card menu li
+{
+	margin:0;
+	padding:0;
+}
+#card button
+{
+	margin:0.25em;
+	padding:0.25em 0.5em;
+}
+#card button:disabled
+{
+	fill:#999;
+}
+#card button svg
+{
+	display:block;
+	width:2em;
+	height:1em;
+}
+#card dl, #card dt, #card dd
+{
+	margin:0;
+	padding:0;
+}
+#card dt:not(:first-of-type)
+{
+	margin-right:0.5em;
+	float:left;
+}
+#card dd::after
+{
+	content:"";
+	clear:both;
+	display:block;
+}
+#card dt:not(:first-of-type)::after
+{
+	content:": ";
+}
+#card dl:empty
+{
+	display:none;
+}
+svg.acjk
+{
+	display:block;
+}
+svg.acjk path[id]
+{
+	fill:#ccc;
+	stroke:none;
+}
+svg.acjk path:not([id])
+{
+	fill:none;
+	stroke:transparent;
+	stroke-width:128;
+	stroke-linecap:round;
+}
+svg.acjk path.visible:not([id])
+{
+	stroke:#000;
+}
+</style>
+<title>AnimCJK Card</title>
+<link rel="icon" type="image/svg+xml" href="../animCJKIcon.svg">
+</head>
+<body>
+<h1>AnimCJK Card</h1>
+<nav class="link">
+<a href="https://github.com/parsimonhi/animCJK"><span>Download</span></a>
+<a href="./"><span>Sample selector</span></a>
+</nav>
+<fieldset class="langSelector"></fieldset>
+<fieldset class="dataSelector"></fieldset>
+<acjk-card id="card">
+<figure><figcaption></figcaption><svg></svg></figure>
+<menu>
+<li><button name="first" onclick="doFirst()" disabled><svg viewBox="-100 -50 200 100">
+<path d="M-50 -50H-12.5V50H-50Z"/>
+<path d="M-12.5 0L62.5 -50V50Z"/>
+</svg></button></li>
+<li><button name="pred" onclick="doPred()" disabled><svg viewBox="-100 -50 200 100">
+<path d="M-50 0L25 -50V50Z"/>
+</svg></button></li>
+<li><button name="next" onclick="doNext()" disabled><svg viewBox="-100 -50 200 100">
+<path d="M50 0L-25 -50V50Z"/>
+</svg></button></li>
+<li><button name="last" onclick="doLast()" disabled><svg viewBox="-100 -50 200 100">
+<path d="M50 -50H12.5V50H50Z"/>
+<path d="M12.5 0L-62.5 -50V50Z"/>
+</svg></button></li>
+</menu>
+<dl></dl>
+</acjk-card>
+<fieldset class="charListSelector"></fieldset>
+<footer>
+<nav class="link">
+<a href="#"><span>Top</span></a>
+<a href="./"><span>Sample selector</span></a>
+<a href="../licenses/COPYING.txt"><span>Licences</span></a>
+</nav>
+</footer>
+<script>
+let card={};
+let dicos={Ja:null,Ko:null,ZhHans:null,ZhHant:null}; // set by selectorAcjk.js
+function getLangAcjk()
+{
+	let e=document.querySelector('[name="lang"]:checked');
+	return e?e.value:"Ja";
+}
+function getLangIso()
+{
+	let e=document.querySelector('[name="lang"]:checked');
+	return e?e.getAttribute("data-lang"):"ja";
+}
+function getLanguage()
+{
+	let lang=getLangAcjk("lang");
+	if(lang=="Ko") return "Korean";
+	if(lang=="ZhHans") return "Simplified Chinese";
+	if(lang=="ZhHant") return "Traditional Chinese";
+	return "Japanese";
+}
+function initCard()
+{
+	let list=document.querySelectorAll('#card figure path:not([id])');
+	if(list&&list.length) card.maxShown=list.length;
+	else card.maxShown=0;
+	card.lastShown=0;
+}
+function disableBtn(name)
+{
+	document.querySelector('#card [name="'+name+'"]').disabled=true;
+}
+function enableBtn(name)
+{
+	document.querySelector('#card [name="'+name+'"]').disabled=false;
+}
+function updateAll()
+{
+	let list=document.querySelectorAll('#card figure path:not([id])');
+	if(list)
+		for(let k=0;k<list.length;k++)
+		{
+			if(k<card.lastShown) list[k].classList.add("visible");
+			else list[k].classList.remove("visible");
+		}
+	if((card.lastShown==0)&&card.maxShown)
+	{
+		disableBtn("first");
+		disableBtn("pred");
+		enableBtn("next");
+		enableBtn("last");
+	}
+	else if((card.lastShown==card.maxShown)&&card.maxShown)
+	{
+		enableBtn("first");
+		enableBtn("pred");
+		disableBtn("next");
+		disableBtn("last");
+	}
+	else if(card.maxShown)
+	{
+		enableBtn("first");
+		enableBtn("pred");
+		enableBtn("next");
+		enableBtn("last");
+	}
+	else
+	{
+		disableBtn("first");
+		disableBtn("pred");
+		disableBtn("next");
+		disableBtn("last");
+	}
+}
+function doFirst()
+{
+	card.lastShown=0;
+	updateAll();
+}
+function doPred()
+{
+	if(card.lastShown>0) card.lastShown--;
+	updateAll();
+}
+function doNext()
+{
+	if(card.lastShown<card.maxShown) card.lastShown++;
+	updateAll();
+}
+function doLast()
+{
+	card.lastShown=card.maxShown;
+	updateAll();
+}
+function updateInfo(s)
+{
+	let d=new Date().getFullYear();
+	s=s.replace(/AnimCJK [0-9-]+/,"AnimCJK 2016-"+d);
+	return s;
+}
+function buildDicoContent(r)
+{
+	if(!r) return "";
+	let c,dec,hex,dico="";
+	c=r.character; // assume r has the character property
+	dec=c.codePointAt(0);
+	hex=dec.toString(16).padStart(5,'0');
+	dico+="<dt>"+c+" U+"+hex+" &amp;#"+dec+";</dt>";
+	if(Object.hasOwn(r,"pinyin")) dico+="<dt>Pinyin</dt><dd class=\"pinyin\">"+(r.pinyin+"").replace(/\([^\)]+\)/g,"").replace(/[ ]+/g,", ")+"</dd>";
+	if(Object.hasOwn(r,"on")) dico+="<dt>On</dt><dd class=\"on\">"+(r.on+"").replace(/,([^ ])/g,", $1")+"</dd>";
+	if(Object.hasOwn(r,"kun")) dico+="<dt>Kun</dt><dd class=\"kun\">"+(r.kun+"").replace(/,([^ ])/g,", $1")+"</dd>";
+	if(Object.hasOwn(r,"definition")) dico+="<dt>Definition</dt><dd class=\"definition\">"+r.definition+"</dd>";
+	if(Object.hasOwn(r,"radical")) dico+="<dt>Radical</dt><dd class=\"radical\">"+r.radical+"</dd>";
+	if(Object.hasOwn(r,"decomposition")) dico+="<dt>Decomposition</dt><dd class=\"decomposition\">"+r.decomposition+"</dd>";
+	if(Object.hasOwn(r,"acjk")) dico+="<dt>Acjk</dt><dd class=\"acjkDecomposition\">"+r.acjk+"</dd>";
+	if(Object.hasOwn(r,"acjks")) dico+="<dt>Acjks</dt><dd class=\"acjksDecomposition\">"+r.acjks+"</dd>";
+	return dico;
+}
+function getOneFromDico(c,langLabel)
+{
+	for(let e of dicos[langLabel])
+		if(e["character"]==c) return e;
+	return null;
+}
+function run(s)
+{
+	let c,r;
+	let f=document.querySelector('#card figure');
+	let d=document.querySelector('#card dl');
+	if(!s.match(/<svg/))
+	{
+		f.innerHTML="<figcaption>Data not found!</figcaption><svg></svg>";
+		return;
+	}
+	s=updateInfo(s);
+	s=s.replace(/<style[^£]+\/style>\s/,"");
+	c=document.querySelector('[name="data"]').value;
+	s="<figcaption>"+c+" ("+getLanguage()+")</figcaption>"+s;
+	f.innerHTML=s;
+	r=getOneFromDico(c,getLangAcjk("lang"));
+	d.innerHTML=buildDicoContent(r);
+	initCard();
+	updateAll();
+}
+function doIt()
+{
+  	let e=document.querySelector('[name="data"]'),c=e.value;
+  	document.querySelector('#card figure').innerHTML="<figcaption></figcaption><svg></svg>";
+	initCard();
+	updateAll();
+	if(c)
+	{
+		let dec=c.codePointAt(0),lang=getLangAcjk();
+		e.value=String.fromCodePoint(dec);
+		if(dec>=11904)
+		{
+			let o={cache:"no-cache"};
+			fetch('../svgs'+lang+'/'+dec+'.svg',o)
+			.then(r=>{if(!r.ok) throw r.statusText; return r.text();})
+			.then(r=>{run(r);return true;})
+			.catch(e=>
+			{
+				document.querySelector("#card figcaption").innerHTML=e+' in svgs'+lang;
+				document.querySelector('#card dl').innerHTML="";
+			});
+		}
+	}
+}
+</script>
+<script src="_js/selectorAcjk.js"></script>
+</body>
+</html>

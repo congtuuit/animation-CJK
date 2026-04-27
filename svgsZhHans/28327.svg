@@ -1,0 +1,74 @@
+<!--
+AnimCJK 2016-2026 Copyright FM-SH, https://github.com/parsimonhi/animCJK
+Derived from:
+    MakeMeAHanzi project - https://github.com/skishore/makemeahanzi
+    Arphic PL KaitiM GB font
+    Arphic PL KaitiM Big5 font
+You can redistribute and/or modify this file under the terms of the Arphic Public License
+as published by Arphic Technology Co., Ltd.
+You should have received a copy of this license along with this file.
+If not, see https://ftp.gnu.org/non-gnu/chinese-fonts-truetype/LICENSE.
+-->
+<svg id="z28327" class="acjk" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+<style>
+<![CDATA[
+@keyframes zk {
+	to {
+		stroke-dashoffset:0;
+	}
+}
+svg.acjk path[clip-path] {
+	--t:0.8s;
+	animation:zk var(--t) linear forwards var(--d);
+	stroke-dasharray:3337;
+	stroke-dashoffset:3339;
+	stroke-width:128;
+	stroke-linecap:round;
+	fill:none;
+	stroke:#000;
+}
+svg.acjk path[id] {fill:#ccc;}
+]]>
+</style>
+<path id="z28327d1" d="M214 158C233 173 251 191 271 210C282 220 310 234 320 208C323 197 322 180 315 159C307 136 271 119 208 105C177 98 177 113 180 123C181 131 194 142 214 158Z"/>
+<path id="z28327d2" d="M127 332C162 369 189 397 214 406C234 412 247 391 242 365C235 334 200 311 142 294C127 289 106 283 110 306C111 313 117 321 127 332Z"/>
+<path id="z28327d3" d="M115 694C107 698 102 704 106 717C119 769 140 797 161 811C184 825 185 801 187 786C189 749 216 649 274 485C282 461 281 438 257 473C239 499 204 559 153 652C145 666 133 681 115 694Z"/>
+<path id="z28327d4" d="M640 155C677 149 739 140 766 127C779 120 772 101 736 92C720 87 675 97 602 115C537 130 476 136 419 141C394 142 391 150 408 162C418 169 435 181 462 180C486 179 486 179 498 178C529 176 562 166 595 162C625 157 625 157 640 155Z"/>
+<path id="z28327d5" d="M399 282C386 277 371 273 357 272C343 271 334 274 345 295C363 329 379 374 390 431C393 447 398 461 408 473C420 486 427 488 430 479C431 472 434 463 433 454C431 437 431 437 430 428C428 416 417 361 411 315C409 303 410 286 399 282Z"/>
+<path id="z28327d6" d="M713 421C716 455 735 459 751 433C755 425 767 407 779 375C790 343 806 318 828 300C840 290 841 280 831 270C820 259 799 245 768 230C735 214 749 220 659 238C624 245 624 245 607 248C581 252 556 255 534 260C505 265 505 265 490 268C455 274 425 277 399 282C388 284 400 317 411 315C420 314 430 311 493 299C520 294 520 294 534 291C554 286 578 283 606 280C637 276 637 276 653 274C708 266 749 246 743 300C734 344 727 374 721 392C717 401 711 411 713 421Z"/>
+<path id="z28327d7" d="M462 180C468 195 486 228 490 268C492 289 492 289 493 299C495 326 499 366 504 417C506 428 538 423 538 412C535 363 534 323 534 291C534 270 534 270 534 260C534 193 546 197 498 178C487 174 458 169 462 180Z"/>
+<path id="z28327d8" d="M659 238C670 167 687 177 640 155C627 147 587 149 595 162C603 175 609 173 607 248C606 269 606 269 606 280C604 318 601 358 597 402C597 414 629 407 631 396C639 353 646 312 653 274C657 250 657 250 659 238Z"/>
+<path id="z28327d9" d="M433 454C450 452 534 439 713 421C723 419 730 397 721 392C697 377 706 382 631 396C608 400 608 400 597 402C576 405 556 409 538 412C515 415 515 415 504 417C477 420 452 423 430 428C421 430 424 456 433 454Z"/>
+<path id="z28327d10" d="M600 580C638 575 714 573 828 573C855 573 860 557 840 541C804 511 771 508 740 517C700 527 651 533 593 542C560 547 560 547 543 549C479 557 411 565 340 575C327 576 324 583 334 593C356 616 384 615 399 612C433 602 470 594 510 590C570 583 570 583 600 580Z"/>
+<path id="z28327d11" d="M593 542C593 526 605 495 594 485C579 471 566 461 553 456C543 451 521 454 533 472C539 481 543 507 543 549C542 607 542 607 541 636C539 711 534 774 523 824C515 853 527 886 553 924C560 935 572 938 580 923C589 902 589 882 589 862C588 798 587 667 590 610C592 565 592 565 593 542Z"/>
+<path id="z28327d12" d="M510 590C468 656 389 722 277 794C255 807 281 811 293 809C409 782 527 644 541 636C580 607 539 551 510 590Z"/>
+<path id="z28327d13" d="M590 610C632 664 677 717 724 768C738 783 759 792 786 794C834 796 882 792 933 786C962 782 956 771 941 766C815 719 727 679 678 644C650 624 625 601 600 580C582 566 576 592 590 610Z"/>
+<defs>
+	<clipPath id="z28327c1"><use href="#z28327d1"/></clipPath>
+	<clipPath id="z28327c2"><use href="#z28327d2"/></clipPath>
+	<clipPath id="z28327c3"><use href="#z28327d3"/></clipPath>
+	<clipPath id="z28327c4"><use href="#z28327d4"/></clipPath>
+	<clipPath id="z28327c5"><use href="#z28327d5"/></clipPath>
+	<clipPath id="z28327c6"><use href="#z28327d6"/></clipPath>
+	<clipPath id="z28327c7"><use href="#z28327d7"/></clipPath>
+	<clipPath id="z28327c8"><use href="#z28327d8"/></clipPath>
+	<clipPath id="z28327c9"><use href="#z28327d9"/></clipPath>
+	<clipPath id="z28327c10"><use href="#z28327d10"/></clipPath>
+	<clipPath id="z28327c11"><use href="#z28327d11"/></clipPath>
+	<clipPath id="z28327c12"><use href="#z28327d12"/></clipPath>
+	<clipPath id="z28327c13"><use href="#z28327d13"/></clipPath>
+</defs>
+<path style="--d:1s;" pathLength="3333" clip-path="url(#z28327c1)" d="M183 113L276 165L308 218"/>
+<path style="--d:2s;" pathLength="3333" clip-path="url(#z28327c2)" d="M117 295L202 359L225 403"/>
+<path style="--d:3s;" pathLength="3333" clip-path="url(#z28327c3)" d="M110 710L172 756L271 464"/>
+<path style="--d:4s;" pathLength="3333" clip-path="url(#z28327c4)" d="M403 148L502 155L765 110"/>
+<path style="--d:5s;" pathLength="3333" clip-path="url(#z28327c5)" d="M347 278L383 310L419 478"/>
+<path style="--d:6s;" pathLength="3333" clip-path="url(#z28327c6)" d="M401 287L750 248L789 296L729 445"/>
+<path style="--d:7s;" pathLength="3333" clip-path="url(#z28327c7)" d="M470 180L508 218L515 418"/>
+<path style="--d:8s;" pathLength="3333" clip-path="url(#z28327c8)" d="M602 158L638 186L611 405"/>
+<path style="--d:9s;" pathLength="3333" clip-path="url(#z28327c9)" d="M428 441L721 402"/>
+<path style="--d:10s;" pathLength="3333" clip-path="url(#z28327c10)" d="M340 587L763 543L846 554"/>
+<path style="--d:11s;" pathLength="3333" clip-path="url(#z28327c11)" d="M538 463L570 503L562 929"/>
+<path style="--d:12s;" pathLength="3333" clip-path="url(#z28327c12)" d="M534 579L528 612L448 694L276 804"/>
+<path style="--d:13s;" pathLength="3333" clip-path="url(#z28327c13)" d="M590 583L768 745L949 775"/>
+</svg>

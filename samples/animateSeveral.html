@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Demo to animate
+several Chinese, Japanese or Korean characters using animCJK SVG files">
+<link rel="stylesheet" href="_css/withSelector.css" type="text/css">
+<style>
+input[name="data"]
+{
+	display:block;
+	box-sizing:border-box;
+	width:100%;
+	margin:0 0.5em 0 0;
+}
+button[name="run"]
+{
+	margin-left:0;
+}
+#output
+{
+	display:flex;
+	flex-wrap:wrap;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	gap:0.125em;
+}
+#output li
+{
+	display:inline-flex;
+	width:16em;
+	height:16em;
+	border:1px solid #ccc;
+	margin:0;
+	padding:0;
+	justify-content:center;
+	align-items:center;
+	vertical-align:top;
+}
+#output li:empty:not(:first-of-type)
+{
+	display:none;
+}
+#output svg
+{
+	display:block;
+}
+</style>
+<title>AnimCJK - Animate Several</title>
+<link rel="icon" type="image/svg+xml" href="../animCJKIcon.svg">
+</head>
+<body>
+<h1>AnimCJK - Animate Several</h1>
+<nav class="link">
+<a href="https://github.com/parsimonhi/animCJK"><span>Download</span></a>
+<a href="./"><span>Sample selector</span></a>
+</nav>
+<fieldset class="langSelector"></fieldset>
+<fieldset class="dataSelector"></fieldset>
+<p>Add several characters in the input field above
+or click on some characters in the bottom list.</p>
+<ul id="output"></ul>
+<fieldset class="charListSelector"></fieldset>
+<footer>
+<nav class="link">
+<a href="#"><span>Top</span></a>
+<a href="./"><span>Sample selector</span></a>
+<a href="../licenses/COPYING.txt"><span>Licences</span></a>
+</nav>
+</footer>
+<script>
+let ready,store,nmax;
+if(window.location.hostname=="localhost") nmax=1000;
+else nmax=10;
+function getLangAcjk()
+{
+	let e=document.querySelector('[name="lang"]:checked');
+	return e?e.value:"Ja";
+}
+function cleanDataForSeveral(s)
+{
+	// remove chars after the nmax-th
+	// keep only chars from ⺀ (decimal unicode 11904)
+	let r="",k=0;
+	for (let c of s)
+	{
+		let dec=c.codePointAt(0);
+    	if(dec>=11904) {r+=c;k++;if(k>=nmax) break;}
+	}
+	return r;
+}
+function displayAll()
+{
+	// add a suffix to the ids in case a char appears multiple times in the data
+	for(let k=0;k<store.length;k++)
+	{
+		let s=store[k],m=s.match(/id="(z[0-9]+)"/);
+		if(m) store[k]=s.replace(/z[0-9]+/g,m[1]+"-"+(k+1));
+	}
+	// add the svgs
+	for(let k=0;k<store.length;k++)
+	{
+		let e=document.querySelector('#output li:nth-of-type('+(k+1)+')');
+		e.innerHTML=store[k];
+	}
+	// modify the delays
+	// work also for special characters or kana with overlapping strokes
+	let list=document.querySelectorAll('#output path[clip-path]'),n=0;
+	for(let e of list)
+	{
+		let a=e.getAttribute("clip-path");
+		if(!a.match(/z[0-9-]+c[0-9]+[b-z]/)) n++;
+		e.setAttribute("style","--d:"+n+"s;");
+	}
+}
+function run(s,c,dir,k,kmax)
+{
+	// if s is not an animCJK svg, display an error message
+	if(!s.match(/<svg[^>]+class="acjk"/)) s=c+" not found in "+dir;
+	store[k]=s;
+	ready++;
+	// display svgs once they are all fetched
+	if(ready==kmax) displayAll();
+}
+function doIt()
+{
+  	let e=document.querySelector('[name="data"]'),s=cleanDataForSeveral(e.value);
+  	e.value=s;
+  	let list=document.querySelectorAll('#output li');
+  	for(let e2 of list) e2.innerHTML="";
+	if(s)
+	{
+		let lang=getLangAcjk(),a=[...s],kmax=a.length,n=0;
+		ready=0;
+		store=[];
+		for(let c of a)
+		{
+			let dec=c.codePointAt(0);
+			if(dec)
+			{
+				let o={cache:"no-cache"},k=n++,dir="svgs"+lang;
+				if((lang=="Ja")&&c.match(/^[ぁ-ゟァ-ヿ]$/u)) dir+="Kana";
+				fetch('../'+dir+'/'+dec+'.svg',o)
+				.then(r=>{if(!r.ok) throw r.statusText; return r.text();})
+				.then(r=>run(r,c,dir,k,kmax))
+				.catch(e=>run(e,c,dir,k,kmax));
+			}
+		}
+	}
+}
+window.addEventListener("load",function(){
+	let e,dataLabel="Kana, Kanji, Hanja or Hanzi (up to "+nmax+")";
+	e=document.querySelector('label:has([name="data"])');
+	e.innerHTML=e.innerHTML.replace(/^[^)]+[)]/,dataLabel);
+	let c=document.getElementById("output");
+	for(let k=0;k<nmax;k++) c.appendChild(document.createElement("li"));
+});
+</script>
+<script src="_js/selectorAcjk.js"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Demo to colorize randomly
+a Japanese or Chinese character using AnimCJK SVG files">
+<link rel="stylesheet" href="_css/withSelector.css" type="text/css">
+<style>
+.specificSelector
+{
+	margin:0.5em 0;
+	padding:0;
+	border:0;
+}
+#a
+{
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	width:16em;
+	height:16em;
+	border:1px solid #ccc;
+	margin:0.5em 0;
+	padding:0;
+}
+#a svg
+{
+	display:block;
+}
+pre
+{
+	border:1px solid #ccc;
+	padding:0.125em;
+	white-space:pre-wrap;
+}
+</style>
+<title>AnimCJK Rainbow</title>
+<link rel="icon" type="image/svg+xml" href="../animCJKIcon.svg">
+</head>
+<body>
+<h1>AnimCJK Rainbow</h1>
+<nav class="link">
+<a href="https://github.com/parsimonhi/animCJK"><span>Download</span></a>
+<a href="./"><span>Sample selector</span></a>
+</nav>
+<fieldset class="langSelector"></fieldset>
+<fieldset class="dataSelector"></fieldset>
+<fieldset class="specificSelector">
+<label>Colorize: <input type="checkbox" name="colorize"></label>
+<label>Numbers: <input type="checkbox" name="numbers"></label>
+</fieldset>
+<figure id="a"></figure>
+<details>
+<summary>SVG code</summary>
+<pre class="codeTag"></pre>
+</details>
+<fieldset class="charListSelector"></fieldset>
+<footer>
+<nav class="link">
+<a href="#"><span>Top</span></a>
+<a href="./"><span>Sample selector</span></a>
+<a href="../licenses/COPYING.txt"><span>Licences</span></a>
+</nav>
+</footer>
+<script src="_js/setNumbersAcjk.js"></script>
+<script>
+function updateCodeTag()
+{
+	let e,s;
+	e=document.getElementById("a");
+	s=e.innerHTML;
+	s=s.replace(/<style./,"<style"+">\n<![CDATA[");
+	s=s.replace(/.\/style>/,"]]>\n<"+"/style>");
+	s=s.replace(/((<\/circle>)|(<\/text>))/g,"$1\n");
+	s=s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+	document.querySelector('.codeTag').innerHTML=s;
+}
+function getLangAcjk()
+{
+	let e=document.querySelector('[name="lang"]:checked');
+	return e?e.value:"Ja";
+}
+function random(n)
+{
+	return Math.floor(Math.random()*n);
+}
+function randomColor(k,km,n)
+{
+	let r,g,b,m=(n+k)%6,x=48,y=96,z=144;
+	r=random(x);
+	g=random(x);
+	b=random(x);
+	switch(m)
+	{
+		case 0:g+=y;r+=z;break;
+		case 1:b+=y;g+=z;break;
+		case 2:r+=y;b+=z;break;
+		case 3:b+=y;r+=z;break;
+		case 4:r+=y;g+=z;break;
+		case 5:g+=y;b+=z;break;
+	}
+	return "rgb("+r+","+g+","+b+")";
+}
+function colorizeStrokes(x,y)
+{
+	// set svg attribute instead of style to let apply global css if any
+	let c,s1="\tfill:none;\n",s2="\tstroke:#000;\n";
+	let svg=document.querySelector('#a svg.acjk');
+	let medians,circles,texts;
+	medians=svg.querySelectorAll('svg.acjk path[clip-path]');
+	if(y)
+	{
+		circles=svg.querySelectorAll('svg.acjk circle');
+		texts=svg.querySelectorAll('svg.acjk text');
+	}
+	if (x)
+	{
+		let n=random(6),km=medians.length,l,lm=0,ms=[];
+		// in case of the svg is special, on has to compute the actual stroke number
+		for (let k=0;k<km;k++)
+		{
+			let v=medians[k].getAttribute("clip-path");
+			let m=v.match(/z[0-9-]+c[0-9]+[b-z]/);
+			ms[k]=m;
+			if(!m) lm++;
+		}
+		l=0;
+		for (let k=0;k<km;k++)
+		{
+			if(!ms[k]) {c=randomColor(l,lm,n);l++;}
+			medians[k].setAttributeNS(null,"stroke",c);
+			if(y)
+			{
+				circles[k].setAttributeNS(null,"stroke",c);
+				texts[k].setAttributeNS(null,"fill",c);
+			}
+		}
+		svg.innerHTML=svg.innerHTML.replace(s2,"");
+	}
+	else
+	{
+		c="#000";
+		for (let e of medians) e.removeAttributeNS(null,"stroke");
+		if(y)
+		{
+			for (let e of circles) e.setAttributeNS(null,"stroke",c);
+			for (let e of texts) e.setAttributeNS(null,"fill",c);
+		}
+		svg.innerHTML=svg.innerHTML.replace(s1+"}",s1+s2+"}");
+	}
+}
+function restartAnime()
+{
+	// force a reflow to restart animation
+	let e,s;
+	e=document.querySelector("svg.acjk");
+	if(e)
+	{
+		s=e.innerHTML;
+		e.innerHTML="";
+		e.innerHTML=s;
+	}
+}
+function switchAll()
+{
+	let x=document.querySelector('[name="colorize"]').checked;
+	let y=document.querySelector('[name="numbers"]').checked;
+	setNumbers(y);
+	colorizeStrokes(x,y);
+	updateCodeTag();
+}
+function updateInfo(s)
+{
+	let d=new Date().getFullYear();
+	s=s.replace(/AnimCJK [0-9-]+/,"AnimCJK 2016-"+d);
+	return s;
+}
+function run(s,c,dir)
+{
+	if(s.match(/<svg[^>]+class="acjk"/))
+	{
+		s=updateInfo(s);
+		let s1="@keyframes zk {\n\tto {\n\t\tstroke-dashoffset:0;\n\t}\n}\n";
+		let s2="@keyframes zzk {\n\tto {\n\t\topacity:1;\n\t}\n}\n";
+		let s3="svg.acjk circle, svg.acjk text {\n";
+		s3+="\topacity:0;\n\tanimation:zzk 0.01s linear forwards var(--d);\n}\n";
+		s=s.replace(s1,s1+s2+s3);
+		document.getElementById("a").innerHTML=s;
+		switchAll();
+	}
+	else
+	{
+		s=c+" not found in "+dir;
+		document.getElementById("a").innerHTML=s;
+	}
+}
+function doIt()
+{
+  	let e=document.querySelector('[name="data"]'),c=e.value;
+  	document.getElementById("a").innerHTML="";
+  	document.querySelector('.codeTag').innerHTML="";
+	if(c)
+	{
+		let dec=c.codePointAt(0);
+		e.value=c=String.fromCodePoint(dec);
+		if(dec>=11904)
+		{
+			let lang=getLangAcjk(),dir='svgs'+lang;
+			if((lang=="Ja")&&c.match(/^[ぁ-ゟァ-ヿ]$/u)) dir+="Kana";
+			fetch('../'+dir+'/'+dec+'.svg',{cache:"no-cache"})
+			.then(r=>{if(!r.ok) throw r.statusText; return r.text();})
+			.then(r=>run(r,c,dir))
+			.catch(e=>run(e,c,dir));
+		}
+	}
+}
+window.addEventListener("load",function(){
+	let e=document.querySelector('[name="numbers"]');
+	e.checked=false;
+	e.addEventListener("click",function(){switchAll();restartAnime();});
+});
+window.addEventListener("load",function(){
+	let e=document.querySelector('[name="colorize"]');
+	e.checked=true;
+	e.addEventListener("click",function(){switchAll();restartAnime();});
+});
+</script>
+<script src="_js/selectorAcjk.js"></script>
+</body>
+</html>

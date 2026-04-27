@@ -1,0 +1,66 @@
+:focus-visible
+{
+	outline:2px solid #07f7;
+	outline-offset:1px;
+}
+a {color:#000;}
+a {display:inline-block;margin:0.25em;padding:0.25em;}
+input[name="data"]
+{
+	display:inline-block;
+	width:5em;
+	margin:0 0.5rem;
+}
+button[name="run"]
+{
+	display:inline-block;
+	font-size:1em;
+	margin:0.25rem;
+}
+.langSelector label {display:block;max-width:max-content;}
+.langSelector, .dataSelector, .charListSelector
+{
+	margin:0;
+	padding:0;
+}
+.langSelector, .dataSelector, .charListSelector, .charListSelector fieldset
+{
+	border:0;
+}
+.langSelector input
+{
+	display:inline-block;
+	margin-right:0.25rem;
+}
+.charListSelector h2
+{
+	margin:0.5rem 0;
+	border-left:0.5rem solid #c00;
+	padding:0 0 0 0.75rem;
+}
+.charListSelector summary
+{
+	margin:0;
+	padding:0;
+}
+.charListSelector h3
+{
+	display:inline;
+	margin:0;
+	padding:0.5rem;
+}
+.charListSelector button
+{
+	-webkit-appearance:none;
+	appearance:none;
+	border:0;
+	padding:0.25em;
+	margin:0.25em;
+	background:none;
+	cursor:pointer;
+	font-size:1.25em;
+}
+body:has([type="Radio"][value="Ja"]:checked) .charListSelector section:not([lang="ja"]){display:none;}
+body:has([type="Radio"][value="Ko"]:checked) .charListSelector section:not([lang="ko"]){display:none;}
+body:has([type="Radio"][value="ZhHans"]:checked) .charListSelector section:not([lang="zh-Hans"]){display:none;}
+body:has([type="Radio"][value="ZhHant"]:checked) .charListSelector section:not([lang="zh-Hant"]){display:none;}
