@@ -183,7 +183,8 @@ function initGrid() {
 	document.querySelector('[name="grid"]').checked = grid;
 }
 function initNumbers() {
-	let numbers = (localStorage.getItem("numbers") == "1") ? true : false;
+	// default ON (null means not set yet → default true)
+	let numbers = localStorage.getItem("numbers") !== "0";
 	document.querySelector('[name="numbers"]').checked = numbers;
 }
 function initXrays() {
