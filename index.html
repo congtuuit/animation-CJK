@@ -130,20 +130,45 @@ stroke by stroke using AnimCJK SVG files">
 		}
 
 		.charList {
-			cursor: pointer;
-			letter-spacing: 0.25rem;
 			color: #000;
 			padding: 0.5rem;
 			margin: 0.25rem 1rem;
-			font-size: 2rem;
+			font-size: 2.2rem;
 			border: 1px solid #ccc;
 			text-align: left;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 4px;
+		}
+
+		.charList span {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 3rem;
+			height: 3rem;
+			cursor: pointer;
+			border-radius: 6px;
+			transition: all 0.2s ease;
+			user-select: none;
+		}
+
+		.charList span:hover {
+			background-color: #f0f0f0;
+			color: #c00;
+			transform: translateY(-2px);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.charList span:active {
+			background-color: #e0e0e0;
+			transform: translateY(0);
 		}
 
 		#data {
 			display: block;
 			text-align: center;
-			width: 8rem;
+			min-width: 200px;
 			font-size: 2rem;
 			height: 3rem;
 			line-height: 3rem;
@@ -294,15 +319,15 @@ stroke by stroke using AnimCJK SVG files">
 			fill: #6666;
 		}
 	</style>
-	<title>AnimCJK Demo</title>
+	<title>Animation CJK</title>
+	<link type="text/css" rel="stylesheet" href="./style.css" />
 	<link rel="icon" type="image/svg+xml" href="animCJKIcon.svg">
 	<script src="samples/_js/strokeColors.js"></script>
 </head>
 
 <body>
-	<h1>AnimCJK Demo</h1>
+	<h1>Animation CJK</h1>
 	<nav>
-		<a href="https://github.com/parsimonhi/animCJK">Download</a>
 		<a href="samples/">Samples</a>
 	</nav>
 	<fieldset>
@@ -314,7 +339,7 @@ stroke by stroke using AnimCJK SVG files">
 			Chinese</label>
 	</fieldset>
 	<fieldset>
-		<label><input name="dico" type="checkbox">Dico</label>
+		<label class="d-none"><input name="dico" type="checkbox">Dico</label>
 		<label><input name="grid" type="checkbox">Grid</label>
 		<label><input name="numbers" type="checkbox">Numbers</label>
 		<label><input name="xrays" type="checkbox">X-rays</label>
@@ -332,16 +357,20 @@ stroke by stroke using AnimCJK SVG files">
 		</datalist>
 	</fieldset>
 	<fieldset>
-		<input autocomplete="off" id="data" type="text" value="" maxlength="23" placeholder="Enter data here">
-		<p class="important instruction"><span class="very-important">Enter only one character</span> in the data field
+		<input autocomplete="off" id="data" type="text" value="" maxlength="23" placeholder="Enter text">
+		<label style="font-size: 13x;" class="important instruction"><span class="very-important">Enter only one
+				character</span> in the data
+			field
 			above or
 			<span class="very-important">click on a character</span> in the lists
 			at the bottom of the page.
-		</p>
-		<button id="ok" type="button">Animate</button>
+		</label>
+		<div>
+			<button id="ok" type="button">Animate</button>
+		</div>
 	</fieldset>
 	<ul id="output"></ul>
-	<section class="description">
+	<section class="description d-none">
 		<h2>Description</h2>
 		<p>
 			AnimCJK contains SVG files to draw
@@ -1069,34 +1098,9 @@ stroke by stroke using AnimCJK SVG files">
 			localStorage.setItem("size", size);
 			document.querySelector(':root').style.setProperty('--size', size + "px");
 		}
-		function magic(ev) {
-			let p1, p2, sel;
-			sel = window.getSelection();
-			if (sel.toString()) return; // actual selection thus just return
-			// to deal characters not in BMP, one has to recompute p
-			// for...of can deal chars not in the BMP
-			p1 = sel.focusOffset;
-			p2 = 0;
-			for (let c of ev.target.innerHTML) {
-				if (c != "\u200B") // ignore \u200B which is the zero-length character
-				{
-					p1 -= c.length;
-					p2++;
-					if (p2 > p1) // the user clicked c and p2 is the position of c in the string
-					{
-						doIt(c); // do something when user clicked c
-						break;
-					}
-				}
-			}
-		}
 		function addCharHandlers(langLabel) {
-			document.querySelectorAll('details:has([id^="' + lcFirst(langLabel) + '"]) .charList').forEach(e => {
-				// insert a zero-length character between each characters to make magic() working
-				e.innerHTML = e.innerHTML.replace(/(.)/ug, "$1\u200B");
-				// add a handler to each .charList to do something when clicking on a character
-				e.addEventListener("click", function (ev) { magic(ev); });
-			});
+			// No longer needed with new span-based approach
+			// but kept for compatibility if needed, though we now handle clicks in endPopulateChars
 		}
 		function getcharListFromDico(langLabel, setLabel) {
 			if (setLabel == "hiragana") return "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんゔがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉゕゖっゃゅょゎ";
@@ -1113,13 +1117,21 @@ stroke by stroke using AnimCJK SVG files">
 		function endPopulateChars(langLabel) {
 			if (dicos[langLabel]) {
 				for (let qis of qi[langLabel]) {
-					e = document.querySelector('details:has(summary h3[id="' + lcFirst(langLabel) + ucFirst(qis[0]) + '"])');
+					let e = document.querySelector('details:has(summary h3[id="' + lcFirst(langLabel) + ucFirst(qis[0]) + '"])');
 					if (e) {
 						let nav = e.querySelector('nav');
 						let p = document.createElement('p');
 						p.classList.add('charList');
 						let s = getcharListFromDico(langLabel, qis[0]);
-						p.append(s);
+						
+						// --- [CHANGE] Wrap each character in a span for better UI/UX ---
+						for (let c of [...s]) {
+							let span = document.createElement('span');
+							span.textContent = c;
+							span.addEventListener('click', () => doIt(c));
+							p.append(span);
+						}
+						
 						nav.before(p);
 						let h3 = e.querySelector('h3');
 						if (h3) {
@@ -1128,7 +1140,6 @@ stroke by stroke using AnimCJK SVG files">
 						}
 					}
 				}
-				addCharHandlers(langLabel);
 			}
 		}
 		function populateCharLists() {
