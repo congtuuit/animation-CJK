@@ -830,6 +830,11 @@ stroke by stroke using AnimCJK SVG files">
 	<script src="samples/_js/setNumbersAcjk.js"></script>
 
 	<script>
+
+		// default settings
+		localStorage.setItem("grid", 1);
+		localStorage.setItem("numbers", 1);
+
 		let dicos = { Ja: null, Ko: null, ZhHans: null, ZhHant: null };
 		let qi = [];
 		qi["Ja"] = [
@@ -1123,7 +1128,7 @@ stroke by stroke using AnimCJK SVG files">
 						let p = document.createElement('p');
 						p.classList.add('charList');
 						let s = getcharListFromDico(langLabel, qis[0]);
-						
+
 						// --- [CHANGE] Wrap each character in a span for better UI/UX ---
 						for (let c of [...s]) {
 							let span = document.createElement('span');
@@ -1131,7 +1136,7 @@ stroke by stroke using AnimCJK SVG files">
 							span.addEventListener('click', () => doIt(c));
 							p.append(span);
 						}
-						
+
 						nav.before(p);
 						let h3 = e.querySelector('h3');
 						if (h3) {
