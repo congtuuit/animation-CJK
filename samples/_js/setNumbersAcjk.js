@@ -15,25 +15,15 @@ function setNumbers(x) {
 			if (g != go) { l = 0; go = g; }
 
 			let clipAttr = list[k].getAttribute('clip-path');
-			// Kiểm tra xem có phải là một phần của nét vẽ không (khớp c1, c3a, c3b...)
 			let isStrokePart = clipAttr.match(/c([0-9]+)[a-z]?\)$/);
 
 			if (isStrokePart) {
-				// Xác định xem đây có phải là phần chính để đánh số không (c1 hoặc c3a)
 				let isPrimary = clipAttr.match(/c[0-9]+a?\)$/);
 				if (isPrimary) l++;
-
-				// --- [CHANGE START] Set màu cho TẤT CẢ các phần của nét ---
-				if (typeof window.getStrokeColor === 'function') {
-					// Dùng chỉ số l hiện tại (l của 3b sẽ giống l của 3a)
-					list[k].style.stroke = window.getStrokeColor(l);
-				}
-				// --- [CHANGE END] ---
 
 				// Chỉ thực hiện vẽ số thứ tự cho phần chính
 				if (isPrimary) {
 					let a, c, d, e, cx, cy, cx1, cy1, cx2, cy2, m, s, p;
-					// Màu cho label number (mặc định)
 					let color1 = "#000", color2 = "#fff", color3 = "#000", fs = 40;
 
 					a = list[k].getAttributeNS(null, "d");
@@ -86,12 +76,35 @@ function setNumbers(x) {
 	}
 	else if (list && list.length) {
 		for (let k = 0; k < list.length; k++) list[k].parentNode.removeChild(list[k]);
+	}
+}
 
-		// --- [CHANGE START] Reset stroke colors when removing numbers ---
-		let paths = document.querySelectorAll("svg.acjk path[clip-path]");
-		for (let k = 0; k < paths.length; k++) {
-			paths[k].style.removeProperty("stroke");
+// Independently apply/remove stroke colors — works regardless of Numbers state
+function setColors(enabled) {
+	var go, g, list, l;
+	list = document.querySelectorAll("svg.acjk path[clip-path]");
+	if (!list || !list.length) return;
+
+	if (enabled && typeof window.getStrokeColor === 'function') {
+		l = 0;
+		go = 0;
+		for (let k = 0; k < list.length; k++) {
+			g = list[k];
+			while (g.tagName != "svg") g = g.parentNode;
+			if (g != go) { l = 0; go = g; }
+
+			let clipAttr = list[k].getAttribute('clip-path');
+			let isStrokePart = clipAttr.match(/c([0-9]+)[a-z]?\)$/);
+			if (isStrokePart) {
+				let isPrimary = clipAttr.match(/c[0-9]+a?\)$/);
+				if (isPrimary) l++;
+				list[k].style.stroke = window.getStrokeColor(l);
+			}
 		}
-		// --- [CHANGE END] ---
+	} else {
+		// Remove custom stroke colors → revert to CSS default
+		for (let k = 0; k < list.length; k++) {
+			list[k].style.removeProperty("stroke");
+		}
 	}
 }

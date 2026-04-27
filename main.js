@@ -99,6 +99,7 @@ function endOk(c, lang, dec, svg, dicoLine) {
 	li.innerHTML = hv + roman + svg + cartouche;
 	ul.append(li);
 	setNumbers(document.querySelector('[name="numbers"]').checked);
+	setColors(window.colorEnabled !== false);
 	ul.scrollIntoView({ block: "nearest" });
 }
 function continueOk(c, lang, langLabel, dec, j, o) {
@@ -195,11 +196,18 @@ function initSize() {
 	document.querySelector('[name="size"]').value = size;
 	document.querySelector(':root').style.setProperty('--size', size + "px");
 }
+function initColor() {
+	// default ON (null means not set yet → default true)
+	let color = localStorage.getItem("color") !== "0";
+	document.querySelector('[name="color"]').checked = color;
+	window.colorEnabled = color;
+}
 function initAll() {
 	initSection();
 	initDico();
 	initGrid();
 	initNumbers();
+	initColor();
 	initXrays();
 	initSize();
 }
@@ -227,6 +235,14 @@ function changeNumbers() {
 	let numbers = document.querySelector('[name="numbers"]').checked;
 	localStorage.setItem("numbers", numbers ? "1" : "0");
 	setNumbers(numbers);
+	// Colors are independent — reapply after numbers change
+	setColors(window.colorEnabled !== false);
+}
+function changeColor() {
+	let color = document.querySelector('[name="color"]').checked;
+	localStorage.setItem("color", color ? "1" : "0");
+	window.colorEnabled = color;
+	setColors(color);
 }
 function changeXrays() {
 	let xrays = document.querySelector('[name="xrays"]').checked;
@@ -314,6 +330,7 @@ window.addEventListener("load", function () {
 	document.querySelector('[name="dico"]').addEventListener("change", changeDico);
 	document.querySelector('[name="grid"]').addEventListener("change", changeGrid);
 	document.querySelector('[name="numbers"]').addEventListener("change", changeNumbers);
+	document.querySelector('[name="color"]').addEventListener("change", changeColor);
 	document.querySelector('[name="xrays"]').addEventListener("change", changeXrays);
 	document.querySelector('[name="size"]').addEventListener("change", changeSize);
 	initAll();
