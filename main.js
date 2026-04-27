@@ -179,7 +179,8 @@ function initDico() {
 	document.querySelector('[name="dico"]').checked = dico;
 }
 function initGrid() {
-	let grid = (localStorage.getItem("grid") == "1") ? true : false;
+	// default ON (null means not set yet → default true)
+	let grid = localStorage.getItem("grid") !== "0";
 	document.querySelector('[name="grid"]').checked = grid;
 }
 function initNumbers() {
